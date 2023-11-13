@@ -29,6 +29,30 @@ public class CompanyData {
     @Column(columnDefinition = "jsonb")
     private Map<Parameter, Integer> scoreMap;
 
+    public int getId() {
+        return id;
+    }
+
+    public String getHashId() {
+        return hashId;
+    }
+
+    public String getIndustryType() {
+        return industryType;
+    }
+
+    public String getAnnualSales() {
+        return annualSales;
+    }
+
+    public Map<Parameter, Integer> getScoreMap() {
+        return scoreMap;
+    }
+
+
+    public CompanyData() {
+    }
+
     public CompanyData(final String hashId, final String industryType, final String annualSales, final Map<Parameter, Integer> scoreMap) {
         this.hashId = hashId;
         this.industryType = industryType;
