@@ -18,6 +18,7 @@ public class SchemaTestApplication implements CommandLineRunner {
 
 	@Override
 	public void run(final String... args) throws Exception {
+		initService.teardown();
 		initService.initialise();
 	}
 }
