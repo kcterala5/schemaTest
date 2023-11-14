@@ -1,12 +1,16 @@
 package com.test.schemaTest.service;
 
 import com.test.schemaTest.models.Bank;
+import com.test.schemaTest.models.BankCustomers;
 import com.test.schemaTest.models.Company;
 import com.test.schemaTest.models.CompanyData;
 import com.test.schemaTest.pojos.Parameter;
+import com.test.schemaTest.repository.BankCustomersRepository;
 import com.test.schemaTest.repository.BankRepository;
 import com.test.schemaTest.repository.CompanyDataRepository;
 import com.test.schemaTest.repository.CompanyRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -16,9 +20,13 @@ import org.springframework.util.DigestUtils;
 import javax.persistence.EntityManager;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.Random;
 
 @Service
 public class InitService {
+
+    private static final Logger logger = LoggerFactory.getLogger(InitService.class);
+    private static final String CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
     // industries
     private static final String MANUFACTURING = "manufacturing";
@@ -30,17 +38,28 @@ public class InitService {
     private static final String SMALL = "small";
     private static final String MEDIUM = "medium";
     private final CompanyDataRepository companyDataRepository;
-    @Autowired
-    EntityManager entityManager;
-    @Autowired
-    private PlatformTransactionManager transactionManager;
-    @Autowired
-    private CompanyRepository companyRepository;
-    @Autowired
-    private BankRepository bankRepository;
 
-    public InitService(final CompanyDataRepository companyDataRepository) {
+    private final EntityManager entityManager;
+
+    private final PlatformTransactionManager transactionManager;
+
+    private final CompanyRepository companyRepository;
+
+    private final BankRepository bankRepository;
+    private final BankCustomersRepository bankCustomersRepository;
+
+    public InitService(final CompanyDataRepository companyDataRepository,
+                       final EntityManager entityManager,
+                       final PlatformTransactionManager transactionManager,
+                       final CompanyRepository companyRepository,
+                       final BankRepository bankRepository,
+                       final BankCustomersRepository bankCustomersRepository) {
         this.companyDataRepository = companyDataRepository;
+        this.entityManager = entityManager;
+        this.transactionManager = transactionManager;
+        this.companyRepository = companyRepository;
+        this.bankRepository = bankRepository;
+        this.bankCustomersRepository = bankCustomersRepository;
     }
 
     public void teardown() {
@@ -51,7 +70,6 @@ public class InitService {
                                 "company," +
                                 "company_data," +
                                 "bank," +
-                                "bank_customer_data," +
                                 "bank_customers"
                         )
                         .executeUpdate();
@@ -63,6 +81,57 @@ public class InitService {
         }
     }
 
+
+    public String generateRandomString(int length) {
+        Random random = new Random();
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for (int i = 0; i < length; i++) {
+            int randomIndex = random.nextInt(CHARACTERS.length());
+            char randomChar = CHARACTERS.charAt(randomIndex);
+            stringBuilder.append(randomChar);
+        }
+
+        return stringBuilder.toString();
+    }
+
+    public int generateRandomNumber(int max) {
+        Random random = new Random();
+        return random.nextInt(max) + 1;
+    }
+
+    public Bank getRandomBank(Bank bank1, Bank bank2, Bank bank3) {
+        int number = generateRandomNumber(100) % 3;
+        return switch (number) {
+            case 0 -> bank1;
+            case 1 -> bank2;
+            case 2 -> bank3;
+            default -> throw new IllegalStateException("Unexpected value: " + number);
+        };
+    }
+
+    public String getRandomIndustry() {
+        int number = generateRandomNumber(100) % 3;
+        return switch (number) {
+            case 0 -> MANUFACTURING;
+            case 1 -> STEEL;
+            case 2 -> REAL_ESTATE;
+            default -> throw new IllegalStateException("Unexpected value: " + number);
+        };
+    }
+
+    public String getRandomSales() {
+        int number = generateRandomNumber(100) % 3;
+        return switch (number) {
+            case 0 -> MICRO;
+            case 1 -> MEDIUM;
+            case 2 -> SMALL;
+            default -> throw new IllegalStateException("Unexpected value: " + number);
+        };
+    }
+
+
+
     public void initialise() {
         Bank bank1 = new Bank("SBI", "Street 1", "Street 2", "City1", "MH", "560123", "9898989898");
         Bank bank2 = new Bank("HDFC", "Street 3", "Street 4", "City2", "KA", "660784", "9090909090");
@@ -70,52 +139,69 @@ public class InitService {
         bankRepository.save(bank3);
         bankRepository.save(bank1);
         bankRepository.save(bank2);
-        Company company = new Company("Fintheon", "street 1", "area", "city", "KN", "560324", "support@fintheon.com", "9090909090", "AAECF6622N");
-        Company company1 = new Company("KSG Autoworks", "street 10", "area", "city", "MH", "100001", "support@ksg.com", "9879879876", "AAACG3995M");
-        Company company2 = new Company("ST Casting", "street 10", "area", "city", "MH", "100001", "support@stc.com", "8090706090", "AAAKG3995M");
-        Company company3 = new Company("Test", "street 2", "street 4", "city", "state", "110087", "support@test.com", "1234567890", "AAALG3995M");
-        companyRepository.save(company);
+
+        Company company1 = new Company("Fintheon", "street 1", "area", "city", "KN", "560324", "support@fintheon.com", "9090909090", "AAECF6622N");
+        Company company2 = new Company("KSG Autoworks", "street 10", "area", "city", "MH", "100001", "support@ksg.com", "9879879876", "AAACG3995M");
+        Company company3 = new Company("ST Casting", "street 10", "area", "city", "MH", "100001", "support@stc.com", "8090706090", "AAAKG3995M");
         companyRepository.save(company1);
         companyRepository.save(company2);
+        companyRepository.save(company3);
 
-        String hashId = DigestUtils.md5DigestAsHex(company.getName().getBytes(StandardCharsets.UTF_8));
-        Map<Parameter, Integer> scoreMap = Map.of(
-                Parameter.QUARTERLY_SALES_GROWTH, 34,
-                Parameter.SALES_GROWTH_MOMENTUM, 50,
-                Parameter.SALES_TREND, 89
-        );
-        CompanyData companyData = new CompanyData(hashId, MANUFACTURING, MICRO, scoreMap);
-        companyDataRepository.save(companyData);
-
-
-
-        String hashId1 = DigestUtils.md5DigestAsHex(company1.getName().getBytes(StandardCharsets.UTF_8));
+        String hashId1 = DigestUtils.md5DigestAsHex(company1.getPanNumber().getBytes(StandardCharsets.UTF_8));
         Map<Parameter, Integer> scoreMap1 = Map.of(
-                Parameter.QUARTERLY_SALES_GROWTH, 89,
-                Parameter.SALES_GROWTH_MOMENTUM, 30,
-                Parameter.SALES_TREND, 29
+                Parameter.QUARTERLY_SALES_GROWTH, generateRandomNumber(100),
+                Parameter.SALES_GROWTH_MOMENTUM, generateRandomNumber(100),
+                Parameter.SALES_TREND, generateRandomNumber(100)
         );
-        CompanyData companyData1 = new CompanyData(hashId1, STEEL, SMALL, scoreMap1);
+        CompanyData companyData1 = new CompanyData(hashId1, MANUFACTURING, MICRO, scoreMap1);
         companyDataRepository.save(companyData1);
 
-
-        String hashId2 = DigestUtils.md5DigestAsHex(company2.getName().getBytes(StandardCharsets.UTF_8));
+        String hashId2 = DigestUtils.md5DigestAsHex(company2.getPanNumber().getBytes(StandardCharsets.UTF_8));
         Map<Parameter, Integer> scoreMap2 = Map.of(
-                Parameter.QUARTERLY_SALES_GROWTH, 64,
-                Parameter.SALES_GROWTH_MOMENTUM, 20,
-                Parameter.SALES_TREND, 89
+                Parameter.QUARTERLY_SALES_GROWTH, generateRandomNumber(100),
+                Parameter.SALES_GROWTH_MOMENTUM, generateRandomNumber(100),
+                Parameter.SALES_TREND, generateRandomNumber(100)
         );
-        CompanyData companyData2 = new CompanyData(hashId2, REAL_ESTATE, MICRO, scoreMap2);
+        CompanyData companyData2 = new CompanyData(hashId2, STEEL, MEDIUM, scoreMap2);
         companyDataRepository.save(companyData2);
 
-
-        String hashId3 = DigestUtils.md5DigestAsHex(company3.getName().getBytes(StandardCharsets.UTF_8));
+        String hashId3 = DigestUtils.md5DigestAsHex(company2.getPanNumber().getBytes(StandardCharsets.UTF_8));
         Map<Parameter, Integer> scoreMap3 = Map.of(
-                Parameter.QUARTERLY_SALES_GROWTH, 94,
-                Parameter.SALES_GROWTH_MOMENTUM, 20,
-                Parameter.SALES_TREND, 19
+                Parameter.QUARTERLY_SALES_GROWTH, generateRandomNumber(100),
+                Parameter.SALES_GROWTH_MOMENTUM, generateRandomNumber(100),
+                Parameter.SALES_TREND, generateRandomNumber(100)
         );
-        CompanyData companyData3 = new CompanyData(hashId3, MANUFACTURING, MEDIUM, scoreMap3);
+        CompanyData companyData3 = new CompanyData(hashId3, REAL_ESTATE, SMALL, scoreMap3);
         companyDataRepository.save(companyData3);
+
+        BankCustomers bankCustomers1 = new BankCustomers(bank1, company1);
+        BankCustomers bankCustomers2 = new BankCustomers(bank2, company2);
+        BankCustomers bankCustomers3 = new BankCustomers(bank3, company3);
+        bankCustomersRepository.save(bankCustomers1);
+        bankCustomersRepository.save(bankCustomers2);
+        bankCustomersRepository.save(bankCustomers3);
+
+
+        logger.info("Storing random data in the database");
+        long start = System.currentTimeMillis();
+        for (int i = 1; i <= 1000; i++) {
+            String panNumber = generateRandomString(10);
+            Company randomCompany = new Company(panNumber, "street 1", "area", "city", "KN", "560324", "support@fintheon.com", "9090909090", panNumber);
+            BankCustomers bankCustomers = new BankCustomers(getRandomBank(bank1, bank2, bank3), randomCompany);
+            String hashId = DigestUtils.md5DigestAsHex(randomCompany.getPanNumber().getBytes(StandardCharsets.UTF_8));
+            Map<Parameter, Integer> scoreMap = Map.of(
+                    Parameter.QUARTERLY_SALES_GROWTH, generateRandomNumber(100),
+                    Parameter.SALES_GROWTH_MOMENTUM, generateRandomNumber(100),
+                    Parameter.SALES_TREND, generateRandomNumber(100)
+            );
+            CompanyData companyData = new CompanyData(hashId, getRandomIndustry(), getRandomSales(), scoreMap);
+
+            companyRepository.save(randomCompany);
+            bankCustomersRepository.save(bankCustomers);
+            companyDataRepository.save(companyData);
+        }
+
+        long latency = System.currentTimeMillis() - start;
+        logger.info("Stored Random Data in {} sec", (latency / 1000));
     }
 }

@@ -16,9 +16,9 @@ public class CompanyController {
         this.companyDataService = companyDataService;
     }
 
-    @GetMapping("/company/{hash}")
-    public ResponseEntity<CompanyDataView> getCompanyDataView(@PathVariable String hash) {
-        CompanyDataView companyDataView = companyDataService.getCompanyDataView(hash);
+    @GetMapping("/company/{panNumber}")
+    public ResponseEntity<CompanyDataView> getCompanyDataView(@PathVariable String panNumber) {
+        CompanyDataView companyDataView = companyDataService.getCompanyDataView(panNumber);
         return ResponseEntity.ok().body(companyDataView);
     }
 
