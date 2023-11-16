@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class BankController {
@@ -27,8 +28,8 @@ public class BankController {
     }
 
     @GetMapping("/bank/{bankId}")
-    public ResponseEntity<List<CompanyDataView>> getCreditRatingForBank(@PathVariable int bankId) {
-        List<CompanyDataView> companyDataViewList = bankService.getCreditRatingForBank(bankId);
+    public ResponseEntity<Map<String, List<CompanyDataView>>> getCreditRatingForBank(@PathVariable int bankId) {
+        Map<String, List<CompanyDataView>> companyDataViewList = bankService.getCreditRatingForBankCustomers(bankId);
         return ResponseEntity.ok().body(companyDataViewList);
     }
 }

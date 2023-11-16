@@ -22,6 +22,12 @@ public class CompanyDataService {
         this.companyDataRepository = companyDataRepository;
     }
 
+    public List<CompanyDataView> getBankCustomersDataView(final List<CompanyData> sameStackCompanies) {
+        return sameStackCompanies.stream()
+                .map(companyData -> getCompanyDataView(companyData, sameStackCompanies))
+                .collect(Collectors.toList());
+    }
+
     public CompanyDataView getCompanyDataView(final String toBeHashed) {
         String hashedId = DigestUtils.md5DigestAsHex(toBeHashed.getBytes(StandardCharsets.UTF_8));
         CompanyData companyData = companyDataRepository.findCompanyDataByHashId(hashedId);

@@ -98,32 +98,32 @@ public class InitService {
         companyRepository.save(company2);
         companyRepository.save(company3);
 
-        String hashId1 = DigestUtils.md5DigestAsHex(company1.getPanNumber().getBytes(StandardCharsets.UTF_8));
-        Map<Parameter, Integer> scoreMap1 = Map.of(
-                Parameter.QUARTERLY_SALES_GROWTH, companyDataUtils.generateRandomNumber(100),
-                Parameter.SALES_GROWTH_MOMENTUM, companyDataUtils.generateRandomNumber(100),
-                Parameter.SALES_TREND, companyDataUtils.generateRandomNumber(100)
-        );
-        CompanyData companyData1 = new CompanyData(hashId1, MANUFACTURING, MICRO, scoreMap1);
-        companyDataRepository.save(companyData1);
-
-        String hashId2 = DigestUtils.md5DigestAsHex(company2.getPanNumber().getBytes(StandardCharsets.UTF_8));
-        Map<Parameter, Integer> scoreMap2 = Map.of(
-                Parameter.QUARTERLY_SALES_GROWTH, companyDataUtils.generateRandomNumber(100),
-                Parameter.SALES_GROWTH_MOMENTUM, companyDataUtils.generateRandomNumber(100),
-                Parameter.SALES_TREND, companyDataUtils.generateRandomNumber(100)
-        );
-        CompanyData companyData2 = new CompanyData(hashId2, STEEL, MEDIUM, scoreMap2);
-        companyDataRepository.save(companyData2);
-
-        String hashId3 = DigestUtils.md5DigestAsHex(company2.getPanNumber().getBytes(StandardCharsets.UTF_8));
-        Map<Parameter, Integer> scoreMap3 = Map.of(
-                Parameter.QUARTERLY_SALES_GROWTH, companyDataUtils.generateRandomNumber(100),
-                Parameter.SALES_GROWTH_MOMENTUM, companyDataUtils.generateRandomNumber(100),
-                Parameter.SALES_TREND, companyDataUtils.generateRandomNumber(100)
-        );
-        CompanyData companyData3 = new CompanyData(hashId3, REAL_ESTATE, SMALL, scoreMap3);
-        companyDataRepository.save(companyData3);
+//        String hashId1 = DigestUtils.md5DigestAsHex(company1.getPanNumber().getBytes(StandardCharsets.UTF_8));
+//        Map<Parameter, Integer> scoreMap1 = Map.of(
+//                Parameter.QUARTERLY_SALES_GROWTH, companyDataUtils.generateRandomNumber(100),
+//                Parameter.SALES_GROWTH_MOMENTUM, companyDataUtils.generateRandomNumber(100),
+//                Parameter.SALES_TREND, companyDataUtils.generateRandomNumber(100)
+//        );
+//        CompanyData companyData1 = new CompanyData(hashId1, MANUFACTURING, MICRO, scoreMap1);
+//        companyDataRepository.save(companyData1);
+//
+//        String hashId2 = DigestUtils.md5DigestAsHex(company2.getPanNumber().getBytes(StandardCharsets.UTF_8));
+//        Map<Parameter, Integer> scoreMap2 = Map.of(
+//                Parameter.QUARTERLY_SALES_GROWTH, companyDataUtils.generateRandomNumber(100),
+//                Parameter.SALES_GROWTH_MOMENTUM, companyDataUtils.generateRandomNumber(100),
+//                Parameter.SALES_TREND, companyDataUtils.generateRandomNumber(100)
+//        );
+//        CompanyData companyData2 = new CompanyData(hashId2, STEEL, MEDIUM, scoreMap2);
+//        companyDataRepository.save(companyData2);
+//
+//        String hashId3 = DigestUtils.md5DigestAsHex(company2.getPanNumber().getBytes(StandardCharsets.UTF_8));
+//        Map<Parameter, Integer> scoreMap3 = Map.of(
+//                Parameter.QUARTERLY_SALES_GROWTH, companyDataUtils.generateRandomNumber(100),
+//                Parameter.SALES_GROWTH_MOMENTUM, companyDataUtils.generateRandomNumber(100),
+//                Parameter.SALES_TREND, companyDataUtils.generateRandomNumber(100)
+//        );
+//        CompanyData companyData3 = new CompanyData(hashId3, REAL_ESTATE, SMALL, scoreMap3);
+//        companyDataRepository.save(companyData3);
 
         BankCustomers bankCustomers1 = new BankCustomers(bank1, company1);
         BankCustomers bankCustomers2 = new BankCustomers(bank2, company2);
@@ -139,17 +139,17 @@ public class InitService {
             String panNumber = companyDataUtils.generateRandomString(10);
             Company randomCompany = new Company(panNumber, "street 1", "area", "city", "KN", "560324", "support@fintheon.com", "9090909090", panNumber);
             BankCustomers bankCustomers = new BankCustomers(companyDataUtils.getRandomBank(bank1, bank2, bank3), randomCompany);
-            String hashId = DigestUtils.md5DigestAsHex(randomCompany.getPanNumber().getBytes(StandardCharsets.UTF_8));
-            Map<Parameter, Integer> scoreMap = Map.of(
-                    Parameter.QUARTERLY_SALES_GROWTH, companyDataUtils.generateRandomNumber(100),
-                    Parameter.SALES_GROWTH_MOMENTUM, companyDataUtils.generateRandomNumber(100),
-                    Parameter.SALES_TREND, companyDataUtils.generateRandomNumber(100)
-            );
-            CompanyData companyData = new CompanyData(hashId, companyDataUtils.getRandomIndustry(), companyDataUtils.getRandomSales(), scoreMap);
+//            String hashId = DigestUtils.md5DigestAsHex(randomCompany.getPanNumber().getBytes(StandardCharsets.UTF_8));
+//            Map<Parameter, Integer> scoreMap = Map.of(
+//                    Parameter.QUARTERLY_SALES_GROWTH, companyDataUtils.generateRandomNumber(100),
+//                    Parameter.SALES_GROWTH_MOMENTUM, companyDataUtils.generateRandomNumber(100),
+//                    Parameter.SALES_TREND, companyDataUtils.generateRandomNumber(100)
+//            );
+//            CompanyData companyData = new CompanyData(hashId, companyDataUtils.getRandomIndustry(), companyDataUtils.getRandomSales(), scoreMap);
 
             companyRepository.save(randomCompany);
             bankCustomersRepository.save(bankCustomers);
-            companyDataRepository.save(companyData);
+//            companyDataRepository.save(companyData);
         }
 
         long latency = System.currentTimeMillis() - start;
