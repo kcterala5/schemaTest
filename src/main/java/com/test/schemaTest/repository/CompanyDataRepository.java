@@ -18,4 +18,7 @@ public interface CompanyDataRepository extends JpaRepository<CompanyData, Intege
     @Query("select c from CompanyData c where c.hashId = :hash")
     CompanyData findCompanyDataByHashId(@Param("hash") String hash);
 
+    @Query("select new com.test.schemaTest.views.CompanyDataView(c.id, c.hashId, c.industryType, c.annualSales, c.scoreMap")
+    List<CompanyDataView> findCreditRatingForBankCustomers(@Param("bankId") int bankId);
+
 }

@@ -73,5 +73,4 @@ public class CompanyDataService {
         // Calculate the percentile based on the position
         return  (double) position / list.size() * 100.0;
     }
-
 }

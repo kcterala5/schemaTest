@@ -60,4 +60,8 @@ public class BankCustomers {
         this.bank = bank;
         this.company = company;
     }
+
+    public BankCustomers() {
+
+    }
 }
