@@ -161,4 +161,8 @@ public class Company {
         this.phoneNumber = phoneNumber;
         this.panNumber = panNumber;
     }
+
+    public Company() {
+
+    }
 }

@@ -119,4 +119,8 @@ public class Bank {
         this.postalCode = postalCode;
         this.phone = phone;
     }
+
+    public Bank() {
+
+    }
 }
