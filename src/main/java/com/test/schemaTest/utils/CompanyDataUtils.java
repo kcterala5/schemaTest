@@ -71,6 +71,6 @@ public class CompanyDataUtils {
                 Parameter.SALES_GROWTH_MOMENTUM, generateRandomNumber(100),
                 Parameter.SALES_TREND, generateRandomNumber(100)
         );
-        return new CompanyData(hashId, industry, sales, scoreMap);
+        return new CompanyData(hashId, industry, sales, scoreMap, generateRandomNumber(100), generateRandomNumber(100));
     }
 }

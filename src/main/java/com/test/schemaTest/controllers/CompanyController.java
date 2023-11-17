@@ -22,4 +22,10 @@ public class CompanyController {
         return ResponseEntity.ok().body(companyDataView);
     }
 
+
+    @GetMapping("/company/sql/{panNumber}")
+    public ResponseEntity<CompanyDataView> getCompanyDataViewFromSQL(@PathVariable String panNumber) {
+        CompanyDataView companyDataView = companyDataService.getCompanyDataViewFromSQL(panNumber);
+        return ResponseEntity.ok().body(companyDataView);
+    }
 }

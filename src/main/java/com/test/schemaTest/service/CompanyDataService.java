@@ -7,10 +7,12 @@ import com.test.schemaTest.views.CompanyDataView;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
+import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,6 +28,27 @@ public class CompanyDataService {
         return sameStackCompanies.stream()
                 .map(companyData -> getCompanyDataView(companyData, sameStackCompanies))
                 .collect(Collectors.toList());
+    }
+
+
+    public CompanyDataView getCompanyDataViewFromSQL(final String panNumber) {
+        String hashId = DigestUtils.md5DigestAsHex(panNumber.getBytes(StandardCharsets.UTF_8));
+        List<Object[]> results =  companyDataRepository.getCompanyDataViewByHashId(hashId);
+        if (results.isEmpty()) {
+            return null; // Handle case where no data is found
+        }
+
+        Object[] row = results.get(0); // Assuming single result
+
+        // Map the values to construct CompanyDataView
+        return new CompanyDataView(
+                (int) row[0],           // id
+                (String) row[1],        // hashId
+                (String) row[2],        // industryType
+                (String) row[3],        // annualSales
+                (BigInteger) row[4],        // salesParameterPercentile
+                0.0         // quarterlySalesGrowthPercentile
+        );
     }
 
     public CompanyDataView getCompanyDataView(final String toBeHashed) {

@@ -2,6 +2,8 @@ package com.test.schemaTest.views;
 
 import com.test.schemaTest.models.CompanyData;
 import com.test.schemaTest.pojos.Parameter;
+
+import java.math.BigInteger;
 import java.util.Map;
 
 public class CompanyDataView {
@@ -12,6 +14,10 @@ public class CompanyDataView {
     public Map<Parameter, Integer> scoreMap;
     public Map<Parameter, Double> percentileMap;
 
+    public BigInteger salesParameterPercentile;
+
+    public Double quarterlySalesGrowthPercentile;
+
 
     public CompanyDataView(final int id, final String hashId, final String industryType, final String annualSales, final Map<Parameter, Integer> scoreMap) {
         this.id = id;
@@ -19,6 +25,16 @@ public class CompanyDataView {
         this.industryType = industryType;
         this.annualSales = annualSales;
         this.scoreMap = scoreMap;
+    }
+
+
+    public CompanyDataView(final int id, final String hashId, final String industryType, final String annualSales, final BigInteger salesParameterPercentile, final Double quarterlySalesGrowthPercentile) {
+        this.id = id;
+        this.hashId = hashId;
+        this.industryType = industryType;
+        this.annualSales = annualSales;
+        this.salesParameterPercentile = salesParameterPercentile;
+        this.quarterlySalesGrowthPercentile = quarterlySalesGrowthPercentile;
     }
 
     public static CompanyDataView from(CompanyData companyData) {
