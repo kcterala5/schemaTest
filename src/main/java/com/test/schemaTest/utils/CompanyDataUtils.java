@@ -5,7 +5,7 @@ import com.test.schemaTest.models.BankCustomers;
 import com.test.schemaTest.models.Company;
 import com.test.schemaTest.models.CompanyData;
 import com.test.schemaTest.pojos.Parameter;
-import org.springframework.util.DigestUtils;
+import org.apache.commons.codec.digest.DigestUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
@@ -63,7 +63,7 @@ public class CompanyDataUtils {
     }
 
     public CompanyData getCompanyDataFromCustomer(BankCustomers customer) {
-        String hashId = DigestUtils.md5DigestAsHex(customer.getCompany().getPanNumber().getBytes(StandardCharsets.UTF_8));
+        String hashId = DigestUtils.sha256Hex(customer.getCompany().getPanNumber().getBytes(StandardCharsets.UTF_8));
         String industry = getRandomIndustry();
         String sales = getRandomSales();
         Map<Parameter, Integer> scoreMap = Map.of(
@@ -71,6 +71,6 @@ public class CompanyDataUtils {
                 Parameter.SALES_GROWTH_MOMENTUM, generateRandomNumber(100),
                 Parameter.SALES_TREND, generateRandomNumber(100)
         );
-        return new CompanyData(hashId, industry, sales, scoreMap);
+        return new CompanyData(hashId, industry, sales, scoreMap, generateRandomNumber(100), generateRandomNumber(100));
     }
 }

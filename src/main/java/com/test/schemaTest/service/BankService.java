@@ -9,8 +9,8 @@ import com.test.schemaTest.repository.BankRepository;
 import com.test.schemaTest.repository.CompanyDataRepository;
 import com.test.schemaTest.utils.CompanyDataUtils;
 import com.test.schemaTest.views.CompanyDataView;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.util.DigestUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -56,7 +56,7 @@ public class BankService {
         Bank bank = bankRepository.findBankById(bankId);
         List<BankCustomers> bankCustomersList = bankCustomersRepository.findBankCustomersByBankId(bankId);
         List<CompanyData> companyDataList = bankCustomersList.stream()
-                .map(bankCustomer -> companyDataRepository.findCompanyDataByHashId(DigestUtils.md5DigestAsHex(bankCustomer.getCompany().getPanNumber().getBytes(StandardCharsets.UTF_8))))
+                .map(bankCustomer -> companyDataRepository.findCompanyDataByHashId(DigestUtils.sha256Hex(bankCustomer.getCompany().getPanNumber().getBytes(StandardCharsets.UTF_8))))
                 .toList();
 
         Map<String, List<CompanyData>> categorizedData = new HashMap<>();

@@ -2,6 +2,7 @@ package com.test.schemaTest.models;
 
 import com.test.schemaTest.pojos.Parameter;
 import com.vladmihalcea.hibernate.type.json.JsonType;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
@@ -29,6 +30,14 @@ public class CompanyData {
     @Column(columnDefinition = "jsonb")
     private Map<Parameter, Integer> scoreMap;
 
+
+    // flat map fields
+    @Column
+    private int salesParameterScore;
+
+    @Column
+    private int quarterlySalesGrowthScore;
+
     public int getId() {
         return id;
     }
@@ -53,10 +62,17 @@ public class CompanyData {
     public CompanyData() {
     }
 
-    public CompanyData(final String hashId, final String industryType, final String annualSales, final Map<Parameter, Integer> scoreMap) {
+    public CompanyData(final String hashId,
+                       final String industryType,
+                       final String annualSales,
+                       final Map<Parameter, Integer> scoreMap,
+                       final int salesParameterScore,
+                       final int quarterlySalesGrowthScore) {
         this.hashId = hashId;
         this.industryType = industryType;
         this.annualSales = annualSales;
         this.scoreMap = scoreMap;
+        this.salesParameterScore = salesParameterScore;
+        this.quarterlySalesGrowthScore = quarterlySalesGrowthScore;
     }
 }
