@@ -4,8 +4,8 @@ import com.test.schemaTest.models.CompanyData;
 import com.test.schemaTest.pojos.Parameter;
 import com.test.schemaTest.repository.CompanyDataRepository;
 import com.test.schemaTest.views.CompanyDataView;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.util.DigestUtils;
 
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
@@ -32,7 +32,8 @@ public class CompanyDataService {
 
 
     public CompanyDataView getCompanyDataViewFromSQL(final String panNumber) {
-        String hashId = DigestUtils.md5DigestAsHex(panNumber.getBytes(StandardCharsets.UTF_8));
+
+        String hashId = DigestUtils.sha256Hex(panNumber.getBytes(StandardCharsets.UTF_8));
         List<Object[]> results =  companyDataRepository.getCompanyDataViewByHashId(hashId);
         if (results.isEmpty()) {
             return null; // Handle case where no data is found
@@ -46,13 +47,13 @@ public class CompanyDataService {
                 (String) row[1],        // hashId
                 (String) row[2],        // industryType
                 (String) row[3],        // annualSales
-                (BigInteger) row[4],        // salesParameterPercentile
+                (Double) row[4],        // salesParameterPercentile
                 0.0         // quarterlySalesGrowthPercentile
         );
     }
 
     public CompanyDataView getCompanyDataView(final String toBeHashed) {
-        String hashedId = DigestUtils.md5DigestAsHex(toBeHashed.getBytes(StandardCharsets.UTF_8));
+        String hashedId = DigestUtils.sha256Hex(toBeHashed.getBytes(StandardCharsets.UTF_8));
         CompanyData companyData = companyDataRepository.findCompanyDataByHashId(hashedId);
         List<CompanyData> sameStackCompanies = companyDataRepository.findCompaniesByIndustryAndSales(companyData.getIndustryType(), companyData.getAnnualSales());
         if (sameStackCompanies == null) {

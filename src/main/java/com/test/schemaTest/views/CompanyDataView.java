@@ -14,7 +14,7 @@ public class CompanyDataView {
     public Map<Parameter, Integer> scoreMap;
     public Map<Parameter, Double> percentileMap;
 
-    public BigInteger salesParameterPercentile;
+    public Double salesParameterPercentile;
 
     public Double quarterlySalesGrowthPercentile;
 
@@ -28,7 +28,7 @@ public class CompanyDataView {
     }
 
 
-    public CompanyDataView(final int id, final String hashId, final String industryType, final String annualSales, final BigInteger salesParameterPercentile, final Double quarterlySalesGrowthPercentile) {
+    public CompanyDataView(final int id, final String hashId, final String industryType, final String annualSales, final Double salesParameterPercentile, final Double quarterlySalesGrowthPercentile) {
         this.id = id;
         this.hashId = hashId;
         this.industryType = industryType;

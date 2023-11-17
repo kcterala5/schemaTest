@@ -10,13 +10,12 @@ import com.test.schemaTest.repository.BankRepository;
 import com.test.schemaTest.repository.CompanyDataRepository;
 import com.test.schemaTest.repository.CompanyRepository;
 import com.test.schemaTest.utils.CompanyDataUtils;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.util.DigestUtils;
 
 import javax.persistence.EntityManager;
 import java.nio.charset.StandardCharsets;
@@ -98,7 +97,8 @@ public class InitService {
         companyRepository.save(company2);
         companyRepository.save(company3);
 
-        String hashId1 = DigestUtils.md5DigestAsHex(company1.getPanNumber().getBytes(StandardCharsets.UTF_8));
+
+        String hashId1 = DigestUtils.sha256Hex(company1.getPanNumber().getBytes(StandardCharsets.UTF_8));
         int salesTrendParameter1 = companyDataUtils.generateRandomNumber(100);
         int quarterlySalesGrowthParameter1 = companyDataUtils.generateRandomNumber(100);
         Map<Parameter, Integer> scoreMap1 = Map.of(
@@ -109,7 +109,7 @@ public class InitService {
         CompanyData companyData1 = new CompanyData(hashId1, MANUFACTURING, MICRO, scoreMap1, salesTrendParameter1, quarterlySalesGrowthParameter1);
         companyDataRepository.save(companyData1);
 
-        String hashId2 = DigestUtils.md5DigestAsHex(company2.getPanNumber().getBytes(StandardCharsets.UTF_8));
+        String hashId2 = DigestUtils.sha256Hex(company2.getPanNumber().getBytes(StandardCharsets.UTF_8));
         int salesTrendParameter2 = companyDataUtils.generateRandomNumber(100);
         int quarterlySalesGrowthParameter2 = companyDataUtils.generateRandomNumber(100);
         Map<Parameter, Integer> scoreMap2 = Map.of(
@@ -120,7 +120,7 @@ public class InitService {
         CompanyData companyData2 = new CompanyData(hashId2, STEEL, MEDIUM, scoreMap2, salesTrendParameter2, quarterlySalesGrowthParameter2);
         companyDataRepository.save(companyData2);
 
-        String hashId3 = DigestUtils.md5DigestAsHex(company2.getPanNumber().getBytes(StandardCharsets.UTF_8));
+        String hashId3 = DigestUtils.sha256Hex(company3.getPanNumber().getBytes(StandardCharsets.UTF_8));
         int salesTrendParameter3 = companyDataUtils.generateRandomNumber(100);
         int quarterlySalesGrowthParameter3 = companyDataUtils.generateRandomNumber(100);
         Map<Parameter, Integer> scoreMap3 = Map.of(
@@ -141,11 +141,11 @@ public class InitService {
 
         logger.info("Storing random data in the database");
         long start = System.currentTimeMillis();
-        for (int i = 1; i <= 1000; i++) {
+        for (int i = 1; i <= 100; i++) {
             String panNumber = companyDataUtils.generateRandomString(10);
             Company randomCompany = new Company(panNumber, "street 1", "area", "city", "KN", "560324", "support@fintheon.com", "9090909090", panNumber);
             BankCustomers bankCustomers = new BankCustomers(companyDataUtils.getRandomBank(bank1, bank2, bank3), randomCompany);
-            String hashId = DigestUtils.md5DigestAsHex(randomCompany.getPanNumber().getBytes(StandardCharsets.UTF_8));
+            String hashId = DigestUtils.sha256Hex(randomCompany.getPanNumber().getBytes(StandardCharsets.UTF_8));
             int salesTrendParameter = companyDataUtils.generateRandomNumber(100);
             int quaterlySalesGrowthParameter = companyDataUtils.generateRandomNumber(100);
             Map<Parameter, Integer> scoreMap = Map.of(

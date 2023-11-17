@@ -19,17 +19,17 @@ public interface CompanyDataRepository extends JpaRepository<CompanyData, Intege
     CompanyData findCompanyDataByHashId(@Param("hash") String hash);
 
 
-    @Query(value = "WITH RankedSales AS (\n" +
-            "    SELECT       id \n" +
-            "    hash_id,\n" +
-            "    industry_type,\n" +
-            "  annual_sales,\n" +
-            "  \t\t\t\t\t\t\t\n" +
-            "        PERCENT_RANK() OVER (ORDER BY sales_parameter_score) * 100 AS approximate_percentile\n" +
-            "    FROM company_data\n" +
-            ")SELECT * FROM RankedSales where hash_id = :hashId", nativeQuery = true)
+    @Query(value = "WITH RankedSales AS ( " +
+            "    SELECT id, " +
+            "           hash_id, " +
+            "           industry_type, " +
+            "           annual_sales, " +
+            "           PERCENT_RANK() OVER (ORDER BY sales_parameter_score) * 100 AS approximate_percentile " +
+            "    FROM company_data " +
+            ") SELECT * FROM RankedSales WHERE hash_id = :hashId", nativeQuery = true)
 
-    // still in progress
+
+        // still in progress
 //    @Query(value = "SELECT cd.id, cd.hash_id, cd.industry_type, " +
 //            "cd.annual_sales, " +
 //            "RANK() OVER (PARTITION BY cd.industry_type, cd.annual_sales ORDER BY cd.sales_parameter_score)" +

@@ -2,6 +2,7 @@ package com.test.schemaTest.models;
 
 import com.test.schemaTest.pojos.Parameter;
 import com.vladmihalcea.hibernate.type.json.JsonType;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
