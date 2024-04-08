@@ -3,9 +3,11 @@ package com.test.schemaTest.repository;
 import com.test.schemaTest.models.CompanyData;
 import com.test.schemaTest.views.CompanyDataView;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -36,6 +38,42 @@ public interface CompanyDataRepository extends JpaRepository<CompanyData, Intege
 //            "FROM company_data cd " +
 //            "WHERE cd.hash_id = :hashId", nativeQuery = true)
     List<Object[]> getCompanyDataViewByHashId(@Param("hashId") String hashId);
+
+
+    @Modifying
+    @Transactional
+    @Query(value = """
+                WITH PercentileRanks AS (
+                    SELECT
+                        id,
+                        sales_parameter_score,
+                        quarterly_sales_growth_score,
+                        PERCENT_RANK() OVER (
+                            PARTITION BY annual_sales, industry_type
+                            ORDER BY sales_parameter_score DESC
+                        ) AS new_sales_score_percentile,
+                        PERCENT_RANK() OVER (
+                            PARTITION BY annual_sales, industry_type
+                            ORDER BY quarterly_sales_growth_score DESC
+                        ) AS new_growth_score_percentile
+                    FROM
+                        company_data
+                    WHERE
+                        annual_sales = ?1 AND industry_type = ?2
+                )
+                UPDATE company_data
+                SET
+                    score_map = jsonb_build_object(
+                        'sales_percentile', PercentileRanks.new_sales_score_percentile,
+                        'growth_percentile', PercentileRanks.new_growth_score_percentile
+                    )
+                FROM
+                    PercentileRanks
+                WHERE
+                    company_data.id = PercentileRanks.id;
+                """,
+            nativeQuery = true)
+    void updateScoreMapBySalesAndIndustryType(String annualSales, String industryType);
 
 
 

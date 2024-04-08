@@ -19,6 +19,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.persistence.EntityManager;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
@@ -141,25 +142,45 @@ public class InitService {
 
         logger.info("Storing random data in the database");
         long start = System.currentTimeMillis();
-        for (int i = 1; i <= 100; i++) {
+//        for (int i = 1; i <= 100; i++) {
+//            String panNumber = companyDataUtils.generateRandomString(10);
+//            Company randomCompany = new Company(panNumber, "street 1", "area", "city", "KN", "560324", "support@fintheon.com", "9090909090", panNumber);
+//            BankCustomers bankCustomers = new BankCustomers(companyDataUtils.getRandomBank(bank1, bank2, bank3), randomCompany);
+//            String hashId = DigestUtils.sha256Hex(randomCompany.getPanNumber().getBytes(StandardCharsets.UTF_8));
+//            int salesTrendParameter = companyDataUtils.generateRandomNumber(100);
+//            int quaterlySalesGrowthParameter = companyDataUtils.generateRandomNumber(100);
+//            Map<Parameter, Integer> scoreMap = Map.of(
+//                    Parameter.QUARTERLY_SALES_GROWTH, quaterlySalesGrowthParameter,
+//                    Parameter.SALES_GROWTH_MOMENTUM, companyDataUtils.generateRandomNumber(100),
+//                    Parameter.SALES_TREND, salesTrendParameter
+//            );
+//            CompanyData companyData = new CompanyData(hashId, companyDataUtils.getRandomIndustry(), companyDataUtils.getRandomSales(), scoreMap, salesTrendParameter, quaterlySalesGrowthParameter);
+//
+//            companyRepository.save(randomCompany);
+//            bankCustomersRepository.save(bankCustomers);
+//            companyDataRepository.save(companyData);
+//        }
+
+        Random random = new Random();
+
+        for (int i = 0; i < 20; i++) {
             String panNumber = companyDataUtils.generateRandomString(10);
             Company randomCompany = new Company(panNumber, "street 1", "area", "city", "KN", "560324", "support@fintheon.com", "9090909090", panNumber);
-            BankCustomers bankCustomers = new BankCustomers(companyDataUtils.getRandomBank(bank1, bank2, bank3), randomCompany);
             String hashId = DigestUtils.sha256Hex(randomCompany.getPanNumber().getBytes(StandardCharsets.UTF_8));
-            int salesTrendParameter = companyDataUtils.generateRandomNumber(100);
-            int quaterlySalesGrowthParameter = companyDataUtils.generateRandomNumber(100);
-            Map<Parameter, Integer> scoreMap = Map.of(
-                    Parameter.QUARTERLY_SALES_GROWTH, quaterlySalesGrowthParameter,
-                    Parameter.SALES_GROWTH_MOMENTUM, companyDataUtils.generateRandomNumber(100),
-                    Parameter.SALES_TREND, salesTrendParameter
-            );
-            CompanyData companyData = new CompanyData(hashId, companyDataUtils.getRandomIndustry(), companyDataUtils.getRandomSales(), scoreMap, salesTrendParameter, quaterlySalesGrowthParameter);
+            String[] industryTypes = {"MANUFACTURING", "CONSTRUCTION"};
+            String industryType = industryTypes[random.nextInt(industryTypes.length)];
 
-            companyRepository.save(randomCompany);
-            bankCustomersRepository.save(bankCustomers);
+            Map<Parameter, Integer> scoreMap = new HashMap<>();
+
+            CompanyData companyData = new CompanyData(hashId,
+                    industryType,
+                    "SMALL",
+                    scoreMap,
+                    10,
+                    random.nextInt(100));
+
             companyDataRepository.save(companyData);
         }
-
         long latency = System.currentTimeMillis() - start;
         logger.info("Stored Random Data in {} sec", (latency / 1000));
     }
