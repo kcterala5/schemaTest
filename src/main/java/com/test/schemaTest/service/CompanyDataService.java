@@ -1,27 +1,37 @@
 package com.test.schemaTest.service;
 
+import com.test.schemaTest.models.Company;
 import com.test.schemaTest.models.CompanyData;
+import com.test.schemaTest.pojos.CompanyCreditRatingGenerationFactor;
 import com.test.schemaTest.pojos.Parameter;
 import com.test.schemaTest.repository.CompanyDataRepository;
+import com.test.schemaTest.repository.CompanyRepository;
+import com.test.schemaTest.utils.CompanyDataUtils;
 import com.test.schemaTest.views.CompanyDataView;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.stereotype.Service;
 
-import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
 public class CompanyDataService {
 
     private final CompanyDataRepository companyDataRepository;
+    private final CompanyRepository companyRepository;
+    private final CompanyCreditRatingService companyCreditRatingService;
 
-    public CompanyDataService(final CompanyDataRepository companyDataRepository) {
+    private static final CompanyDataUtils companyDataUtils = new CompanyDataUtils();
+
+    public CompanyDataService(final CompanyDataRepository companyDataRepository,
+                              final CompanyRepository companyRepository,
+                              final CompanyCreditRatingService companyCreditRatingService) {
         this.companyDataRepository = companyDataRepository;
+        this.companyRepository = companyRepository;
+        this.companyCreditRatingService = companyCreditRatingService;
     }
 
     public List<CompanyDataView> getBankCustomersDataView(final List<CompanyData> sameStackCompanies) {
@@ -60,6 +70,15 @@ public class CompanyDataService {
             return CompanyDataView.from(companyData);
         }
         return getCompanyDataView(companyData, sameStackCompanies);
+    }
+
+    public void addCompany() {
+        String panNumber = companyDataUtils.generateRandomString(10);
+        Company randomCompany = new Company(panNumber, "street 1", "area", "city", "KN", "560324", "support@fintheon.com", "9090909090", panNumber);
+        companyRepository.save(randomCompany);
+
+        companyCreditRatingService.saveCompanyCreditRatingRequest(randomCompany.getId(), CompanyCreditRatingGenerationFactor.GST);
+        companyCreditRatingService.triggerAsyncCreditRatingGeneration(randomCompany.getId());
     }
 
     private CompanyDataView getCompanyDataView(final CompanyData companyData, final List<CompanyData> sameStackCompanies) {

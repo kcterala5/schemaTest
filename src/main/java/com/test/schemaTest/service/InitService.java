@@ -5,10 +5,7 @@ import com.test.schemaTest.models.BankCustomers;
 import com.test.schemaTest.models.Company;
 import com.test.schemaTest.models.CompanyData;
 import com.test.schemaTest.pojos.Parameter;
-import com.test.schemaTest.repository.BankCustomersRepository;
-import com.test.schemaTest.repository.BankRepository;
-import com.test.schemaTest.repository.CompanyDataRepository;
-import com.test.schemaTest.repository.CompanyRepository;
+import com.test.schemaTest.repository.*;
 import com.test.schemaTest.utils.CompanyDataUtils;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
@@ -48,6 +45,7 @@ public class InitService {
 
     private final BankRepository bankRepository;
     private final BankCustomersRepository bankCustomersRepository;
+    private final CompanyCreditRatingGenerationRequestRepository companyCreditRatingGenerationRequestRepository;
     private static final CompanyDataUtils companyDataUtils = new CompanyDataUtils();
 
     public InitService(final CompanyDataRepository companyDataRepository,
@@ -55,13 +53,15 @@ public class InitService {
                        final PlatformTransactionManager transactionManager,
                        final CompanyRepository companyRepository,
                        final BankRepository bankRepository,
-                       final BankCustomersRepository bankCustomersRepository) {
+                       final BankCustomersRepository bankCustomersRepository,
+                       final CompanyCreditRatingGenerationRequestRepository companyCreditRatingGenerationRequestRepository) {
         this.companyDataRepository = companyDataRepository;
         this.entityManager = entityManager;
         this.transactionManager = transactionManager;
         this.companyRepository = companyRepository;
         this.bankRepository = bankRepository;
         this.bankCustomersRepository = bankCustomersRepository;
+        this.companyCreditRatingGenerationRequestRepository = companyCreditRatingGenerationRequestRepository;
     }
 
     public void teardown() {
@@ -72,7 +72,9 @@ public class InitService {
                                 "company," +
                                 "company_data," +
                                 "bank," +
-                                "bank_customers"
+                                "bank_customers," +
+                                "company_credit_rating_generation_request," +
+                                "credit_score"
                         )
                         .executeUpdate();
                 transactionStatus.flush();
