@@ -4,10 +4,7 @@ import com.test.schemaTest.repository.CompanyDataRepository;
 import com.test.schemaTest.service.CompanyDataService;
 import com.test.schemaTest.views.CompanyDataView;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class CompanyController {
@@ -36,6 +33,12 @@ public class CompanyController {
     @GetMapping("/company/add/{annual_sales}/{industry_type}")
     public ResponseEntity<Void> updateMappings(@PathVariable String annual_sales, @PathVariable String industry_type) {
         companyDataRepository.updateScoreMapBySalesAndIndustryType(annual_sales, industry_type);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/company/")
+    public ResponseEntity<Void> addCompany() {
+        companyDataService.addCompany();
         return ResponseEntity.ok().build();
     }
 }
